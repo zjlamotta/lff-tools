@@ -1,0 +1,15 @@
+{
+  "name": "lff-marketplace",
+  "owner": {
+    "name": "Zach La Motta",
+    "email": "zjlamotta@gmail.com"
+  },
+  "description": "LFF's private skill marketplace for Claude Code + Cowork.",
+  "plugins": [
+    {
+      "name": "lff-tools",
+      "source": "./plugins/lff-tools",
+      "description": "Deal workflow skills: om-screen, underwrite, om-deep-dive, broker-questions, comp-pull-spec, tax-bill-parse, refresh-market, lp-log, deal-log, brief, compile, lint, sync."
+    }
+  ]
+}

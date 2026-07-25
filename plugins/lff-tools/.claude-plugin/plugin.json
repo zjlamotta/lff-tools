@@ -1,0 +1,11 @@
+{
+  "name": "lff-tools",
+  "displayName": "LFF Acquisition Tools",
+  "version": "1.0.0",
+  "description": "LFF's deal workflow skills: OM screening, underwriting, analyst memos, broker-question scaffolding, comp-pull specs, tax-bill parsing, market refresh, LP/deal logging, and KB maintenance (compile/lint/sync).",
+  "author": {
+    "name": "Zach La Motta",
+    "email": "zjlamotta@gmail.com"
+  },
+  "license": "UNLICENSED"
+}
