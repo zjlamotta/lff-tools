@@ -1,6 +1,6 @@
 ---
 name: underwrite
-description: Produce the standardized one-page data scorecard for an industrial/flex deal from an OM/flyer — extract, screen vs fund criteria, comps, capital stack, price sensitivity & return targets, PM first-call. Presents the numbers; gives no verdict. Use when you want the full underwriting scorecard. For a fast Pass/Borderline/Pursue gut-check first, use `om-screen`; for a full IC memo after committing, use `om-deep-dive`.
+description: The acquisition FRONT DOOR — produce the one-page data scorecard AND a bid recommendation for an industrial/flex deal from an OM/flyer. Fit-check, extract, screen, comps, capital stack, price sensitivity, a quick levered-IRR/equity-multiple approximation, and an OFFER / HOLD / PASS gate with an opening-bid and walk-away number you can act on before any Excel model. Use when a deal lands and you need a number to offer off. `om-deep-dive` (IC memo) and your full Excel model come LATER, only after an offer sticks (DD confirmation). For a blind-OM firehose triage only, use `om-screen`.
 ---
 
 # Auto-Underwrite
@@ -193,7 +193,35 @@ Cash-on-Cash = (Stabilized NOI - Annual Debt Service) / Total Equity
 
 Flag if Cash-on-Cash is below 7% target at any price point.
 
-Note: IRR and equity multiple require hold period modeling beyond this scorecard. State: "Levered IRR target: 20-22%. Equity multiple target: 2.0-2.3x over 5-year hold. Run full model to verify."
+**Table D: Quick Levered IRR / Equity Multiple (5-yr approximation — no Excel needed)**
+
+This is a deliberate approximation so you can bid off the scorecard. It is NOT the full model — the Excel
+model is a post-offer confirmation. State the assumptions explicitly every time:
+
+- Hold: 5 years
+- Forward NOI: Year 1 = Stabilized NOI; grow 3%/yr (or use the rent roll's weighted escalations if shown).
+  If the deal has a lease-up ramp, note the early-year CF is lighter than a flat stabilized figure implies.
+- Exit cap: entry going-in cap, held FLAT (no compression credit) as base; also show exit +50 bps as downside.
+- Cost of sale: 2% of gross sale price.
+- Debt: from Step 4 (65% LTV, rate, 25-yr amort, 5-yr term). Loan balance at exit = amortized balance after 60 payments.
+- Equity: Total Basis − Loan (Step 4).
+
+Levered cash-flow stream, computed per price point:
+- Year 0: −Equity
+- Years 1–5: `NOI_year − Annual Debt Service`, where `NOI_year = Stabilized NOI × 1.03^(year−1)`
+- Year 5 also adds Net Sale = `(Stabilized NOI × 1.03^5 ÷ exit cap) × (1 − 0.02) − Loan Balance_Y5`
+- Quick IRR = IRR of that stream. Quick EM = `(Σ Years 1–5 CF + Net Sale) ÷ Equity`.
+
+```
+  | Price | $/SF | Equity | Quick IRR | Quick EM | vs 20-22% IRR / 2.0-2.3x EM |
+  | Asking / Anchor | | | | | |
+  | -10% | | | | | |
+  | -15% | | | | | |
+  | -20% | | | | | |
+```
+
+Then compute the single **walk-away price** = the price where Quick IRR ≈ 21% (interpolate from the table).
+This feeds the bid gate in Step 7.
 
 ### Step 6: SCORECARD OUTPUT
 
@@ -226,7 +254,9 @@ SCREENING
 RETURNS
   Cash-on-Cash (stabilized): {X}% {vs 7% target: PASS/FAIL}
   Unlevered yield (stabilized): {X}%
-  IRR/EM: Run full model (target 20-22% IRR, 2.0-2.3x EM, 5yr hold)
+  Quick levered IRR (5-yr approx): {X}% {vs 20-22% target}  |  Quick EM: {X}x
+  ═══ BID GATE: {OFFER at $X — walk-away $Y | HOLD — pencils ≤$Y | PASS — no pencil} ═══
+  (Your Excel model confirms this post-offer; not run here)
 
 PRICE SENSITIVITY
   {Tables A, B, C from Step 5}
@@ -254,17 +284,41 @@ BROKER
 ═══════════════════════════════════════════════════════════
 ```
 
+### Step 7: OFFER / HOLD / PASS — the bid gate
+
+This is the front-door output — the number to act on before any Excel model. Using Table D + comps (Step 3):
+
+1. **Walk-away** = price where Quick IRR ≈ 21% (midpoint of the 20-22% target).
+2. **Opening bid** = walk-away × 0.875 (open ~12.5% below walk-away — pair a low opener with hard/clean
+   terms, per the LFF bid-anchor strategy). Round to a clean number.
+3. **Gate** (compare walk-away to asking / likely-clearing price):
+   - **OFFER** — walk-away within ~10% of asking (target returns at a plausibly winnable price).
+     Output: `OFFER at $[opening] — walk-away $[walk-away]`.
+   - **HOLD** — walk-away 10–25% below asking (pencils only at a real discount).
+     Output: `HOLD — pencils ≤ $[walk-away]; offer low or revisit if it sits`.
+   - **PASS** — walk-away >25% below asking, or can't clear ~15% IRR at any realistic price.
+     Output: `PASS — doesn't pencil at a realistic price`.
+4. **Sanity-check the bid against comps + floor/ceiling spread (Step 3)** — never recommend offering above
+   what the basis comps support, even if the IRR math allows it. Bid off actuals, not the OM pro forma.
+
+The scorecard is what you bid off. `om-deep-dive` (IC memo) and the full Excel model come **after** an offer
+sticks, as DD confirmation — not before.
+
 ## Rules
 
-- Do NOT give a verdict (Pass/Counter/Pursue). The scorecard presents data; Zach makes the call.
+- The scorecard's job IS to hand Zach a bid number — give the **OFFER / HOLD / PASS** gate with an opening
+  bid and walk-away. This is a bid recommendation to act on, not a final buy commitment (Zach still decides).
+- Do NOT defer returns to "run full model" — approximate the levered IRR here (Table D). The Excel model is a
+  post-offer confirmation, not the front-door filter.
 - Do NOT ask clarifying questions during the process. Use "NOT PROVIDED" for missing data.
-- Do NOT skip steps. Run all 5 even if data is sparse.
+- Do NOT skip steps. Run all of them even if data is sparse.
 - Read the FULL OM — every page. Financials are usually on pages 15-25.
 - If the OM has multiple NOI scenarios (current, transition, pro forma), include ALL of them.
 - Always calculate NNN-equivalent rent for Gross leases by subtracting OpEx/SF.
 - For Florida deals: flag that property taxes will reassess on sale.
 - For unpriced deals: note "UNPRICED" and anchor price sensitivity to market avg $/SF.
-- After the scorecard, ask: "Want me to dig deeper on this one, or is it a pass?"
+- End with the bid gate in one line: `OFFER at $X — walk-away $Y`, `HOLD — pencils ≤ $Y`, or `PASS`. Then
+  note that `om-deep-dive` (IC memo) and the full Excel model are the post-offer steps if it advances.
 
 ## Knowledge Base Paths
 
