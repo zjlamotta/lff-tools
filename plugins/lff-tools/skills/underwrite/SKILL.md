@@ -101,29 +101,51 @@ SCREENING RESULTS
 
 If the deal has ANY hard reject (sub-10K SF, pre-1970 unrenovated, >40% office, condo, >2 stories, not in target market), stop here and report HARD REJECT with the reason. Don't run Steps 3-5.
 
-### Step 3: BENCHMARK
+### Step 3: BENCHMARK — two-source comp scorecard (YOUR comps + public)
 
-Read the comps database:
-`/home/zjlammotta/projects/knowledge-base/real-estate/wiki/target-market-comps-database.md`
+Benchmark the deal against **two** comp sets. **Zach's master comps are the source of truth**; the public/KB
+comps are the cross-check.
 
-Read the market analysis:
-`/home/zjlammotta/projects/knowledge-base/real-estate/wiki/target-market-analysis.md`
+**Source A — Zach's master comp spreadsheet (authoritative).**
+Find the LATEST `Target_Market_Comps_v{N}.xlsx` in `/mnt/c/Users/zjlam/Desktop/Inbox/` (highest version
+number). Structure is documented in `walt/master-comp-spreadsheet-format.md`. Read:
+- The **market sheet** matching the deal's metro (sheet names like `Columbus, OH`, `Kansas City, MO`,
+  `Louisville, KY`, `Richmond, VA`, `Nashville, TN`, `Tampa, FL`, `Long Island, NY`, `New Jersey`, …).
+  - **Sale comps** live in cols B–Q (data from row 17): B Date, C Address, D Submarket, E Size SF, F Price,
+    G $/SF, I Secondary Type (Industrial/Office/Flex), K Class, L Year Built, N Clear Height.
+  - **Lease comps** live in cols S–AH (data from row 17): S Date, U Size, V Rent $/SF, W Type, **X NNN Equiv**
+    (use this — already normalized to NNN), Z Secondary Type, AC Year Built.
+  - **Inline methodology** rows 4–15 hold Zach's own Sale/Lease Market Summary by Industrial / Office / Flex
+    plus the **Flex-Ind spread** and comp counts — use these as the headline benchmark.
+- The **`Cap Rate Tracker`** sheet for the market's cap rate by asset type.
+- The **`OpEx Tracker`** sheet for Industrial/Flex OpEx $/SF for the market.
+- Filter the individual comps to the subject's **product type, vintage (±~15 yrs), and size band**; report the
+  N closest.
+- If the deal's market has **no sheet** (off-list), say "no master comps for {market} — public only."
 
-Read flex vacancy data:
-`/home/zjlammotta/projects/knowledge-base/real-estate/wiki/small-bay-data-vault.md`
+**Source B — public / KB comps (cross-check).**
+`real-estate/wiki/target-market-comps-database.md`, `real-estate/wiki/target-market-analysis.md`,
+`real-estate/wiki/small-bay-data-vault.md`.
 
-Output:
+Output the two-source scorecard:
 
 ```
-COMP BENCHMARK
-  | Metric | Market Avg | This Deal | vs Market |
-  | Sale $/SF (Industrial) | ${X} | ${Y} | +/-Z% |
-  | Sale $/SF (Flex) | ${X} | ${Y} | +/-Z% |
-  | Lease NNN $/SF | ${X} | ${Y} | +/-Z% |
-  | OpEx $/SF | ${X} | ${Y} | +/-Z% |
-  | Flex Vacancy | {X}% | {Y}% | — |
-  | Rent Growth (YoY) | {X}% | — | — |
+COMP BENCHMARK  (source of truth = YOUR master comps; public = cross-check)
+  Market sheet: {sheet} in Target_Market_Comps_v{N}.xlsx  |  YOUR comp count (filtered): {N}
+
+  | Metric | YOUR comps | Public/KB | This Deal | vs YOUR comps |
+  | Sale $/SF — Industrial | ${Y} | ${X} | ${Z} | +/-% |
+  | Sale $/SF — Flex | ${Y} | ${X} | ${Z} | +/-% |
+  | Lease NNN $/SF (X: NNN-equiv) | ${Y} | ${X} | ${Z} | +/-% |
+  | Cap rate | {Y}% | {X}% | {Z}% | +/- bps |
+  | OpEx $/SF | ${Y} | ${X} | ${Z} | +/-% |
+  | Flex-Ind spread (your methodology) | ${Y} | — | — | — |
+  | Flex Vacancy / Rent Growth | — | {X}% / +{X}% | — | — |
 ```
+
+Weight YOUR comps as authoritative. **Flag any metric where public diverges from your comps by >15%** — that
+gap is usually the broker cherry-picking newer/higher-clear product (the GPP lesson). The bid gate (Step 7)
+must be sanity-checked against YOUR comps' basis, not the public number or the OM pro forma.
 
 ### Step 4: CAPITAL STACK & TOTAL BASIS
 
@@ -323,7 +345,8 @@ sticks, as DD confirmation — not before.
 ## Knowledge Base Paths
 
 - Screening: `/home/zjlammotta/projects/knowledge-base/real-estate-fund/wiki/deal-screening-criteria.md`
-- Comps: `/home/zjlammotta/projects/knowledge-base/real-estate/wiki/target-market-comps-database.md`
+- **YOUR master comps (source of truth):** latest `Target_Market_Comps_v{N}.xlsx` in `/mnt/c/Users/zjlam/Desktop/Inbox/`; structure in `walt/master-comp-spreadsheet-format.md`
+- Public/KB comps (cross-check): `/home/zjlammotta/projects/knowledge-base/real-estate/wiki/target-market-comps-database.md`
 - Market analysis: `/home/zjlammotta/projects/knowledge-base/real-estate/wiki/target-market-analysis.md`
 - Flex vacancy: `/home/zjlammotta/projects/knowledge-base/real-estate/wiki/small-bay-data-vault.md`
 - PM vendors: `/home/zjlammotta/projects/knowledge-base/real-estate-fund/wiki/property-management-vendor-list.md`
